@@ -24,7 +24,7 @@ $ sh BatchDeleteGithubRepos.sh [show|fetch|remove]
 3. 在脚本开头处配置在GIHUB官网上生成好的TOKEN, 即: TOKEN='在这里填写你自己的TOKEN'
 4. 在脚本的同级目录下手动创建一个文本文件，文件名必须命名为：repos.txt, 用于配置待删项目
 5. 打开repos.txt文件新增待删项目，支持批量删除，所以一行一个, 格式形如：username/reponame
-6. 最后保存脚本，然后执行: sh BatchDeleteGithubRepos.sh <show|fetch|remove>
+6. 最后保存脚本，然后执行: sh BatchDeleteGithubRepos.sh [show|fetch|remove]
 ```
 
 ## 使用技巧
