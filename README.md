@@ -9,7 +9,7 @@
 ```
 [脚本执行说明]
 
-$ sh BatchDeleteGithubRepos.sh <show|fetch|remove>
+$ sh BatchDeleteGithubRepos.sh [show|fetch|remove]
 
 [可用命令说明]
 
