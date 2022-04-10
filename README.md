@@ -15,20 +15,20 @@ $ sh BatchDeleteGithubRepos.sh [show|fetch|remove]
 
 1. show:   查看本地自行配置好的待删公共项目
 2. fetch:  根据用户名在线查询名下的公共项目
-2. remove: 根据配置文件批量删除指定公共项目
+3. remove: 根据配置文件批量删除指定公共项目
 
 [脚本使用说明]
 
-1. 首先手动打开本批量删除脚本, 总共需要配置两个选项：username 和 token
-2. 在脚本开头处配置在GIHUB官网上的个人用户名,  即: USERNAME='在这里填写你自己的用户名'
-3. 在脚本开头处配置在GIHUB官网上生成好的TOKEN, 即: TOKEN='在这里填写你自己的TOKEN'
-4. 在脚本的同级目录下手动创建一个文本文件，文件名必须命名为：repos.txt, 用于配置待删项目
+1. 默认会自动创建config.ini，如果没有请手动创建, 总共只有两个配置选项：username 和 token
+2. 在config.ini中配置在GIHUB官网上的个人用户名,  即: USERNAME='在这里填写你自己的用户名'
+3. 在config.ini中配置在GIHUB官网上生成好的TOKEN, 即: TOKEN='在这里填写你自己的TOKEN'
+4. 默认会自动创建repos.txt，如果没有请手动创建, 文件名必须命名为: repos.txt, 用于配置待删项目
 5. 打开repos.txt文件新增待删项目，支持批量删除，所以一行一个, 格式形如：username/reponame
 6. 最后保存脚本，然后执行: sh BatchDeleteGithubRepos.sh [show|fetch|remove]
 ```
 
 ## 使用技巧
-当待删项目较多的时候，手动一行一行配置多少还是有些笨拙，
+当待删项目较多的时候，手动一行一行配置多少还是显得有些笨拙，
 可以配合fetch命令先导出到待删配置文件，然后再修改下就好了：
 
 ```

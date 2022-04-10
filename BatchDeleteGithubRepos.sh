@@ -9,32 +9,14 @@
 #****************************************************************
 
 
-
-#===================自行配置区域开始=============================
-#USERNAME="在这里填写github上的用户名"
-#TOKEN="在这里填写从github上获取的TOKEN"
-#===================自行配置区域结束=============================
-
-
-
-
-
-
-#===================以下配置代码不要乱动=========================
-#===================以下配置代码不要乱动=========================
-#===================以下配置代码不要乱动=========================
-USER_REPO_GITHUB_API="https://api.github.com/users/$USERNAME/repos"
-TO_DELETE_REPOS_FILE="repos.txt"
-
-
 help(){
     echo ""
     echo "[脚本使用说明]"
     echo ""
-    echo "1. 首先手动打开本批量删除脚本, 总共需要配置两个选项：username 和 token";
-    echo "2. 在脚本开头处配置在GIHUB官网上的个人用户名,  即: USERNAME='在这里填写你自己的用户名'";
-    echo "3. 在脚本开头处配置在GIHUB官网上生成好的TOKEN, 即: TOKEN='在这里填写你自己的TOKEN'";
-    echo "4. 在脚本的同级目录下手动创建一个文本文件，文件名必须命名为：repos.txt, 用于配置待删项目";
+    echo "1. 默认会自动创建config.ini，如果没有请手动创建, 总共只有两个配置选项：username 和 token";
+    echo "2. 在config.ini中配置在GIHUB官网上的个人用户名,  即: USERNAME='在这里填写你自己的用户名'";
+    echo "3. 在config.ini中配置在GIHUB官网上生成好的TOKEN, 即: TOKEN='在这里填写你自己的TOKEN'";
+    echo "4. 默认会自动创建repos.txt，如果没有请手动创建, 文件名必须命名为: repos.txt, 用于配置待删项目";
     echo "5. 打开repos.txt文件新增待删项目，支持批量删除，所以一行一个, 格式形如：username/reponame";
     echo "6. 最后保存脚本，然后执行: sh BatchDeleteGithubRepos.sh [show|fetch|remove]";
     echo ""
@@ -49,7 +31,7 @@ fetch(){
         echo ""
         echo "[在线查询项目操作失败]"
         echo ""
-        echo ">> 请提供有效的github用户名"
+        echo ">> 请在config.ini中配置有效的github用户名"
         echo ""
         exit
     fi
@@ -73,7 +55,7 @@ remove(){
         echo '>> TOKEN无效: 发现TOKEN值为空，请提供有效TOKEN';
         echo '>> TOKEN生成：https://github.com/settings/tokens';
         echo '>> TOKEN权限: 生成TOKEN时必须勾选delete repo权限';
-        echo '>> TOKEN设置: 在本脚本开始配置上面生成的TOKEN值';
+        echo '>> TOKEN设置: 在config.ini配置上面生成的TOKEN值';
         echo '>> TOKEN安全: 操作完毕后建议立即删除生成的TOKEN';
         echo ""
         exit
@@ -103,21 +85,14 @@ remove(){
 
     while read repo;
     do 
-        curl -XDELETE -H "Authorization: token $TOKEN" "https://api.github.com/repos/$repo ";
-        echo $repo
+        if [ ! -z "$repo" ]; then
+            curl -XDELETE -H "Authorization: token $TOKEN" "https://api.github.com/repos/$repo ";
+            #echo $repo
+        fi
     done < $TO_DELETE_REPOS_FILE
 }
 
 listReposToBeDeleted(){
-    if [ ! -f "./$TO_DELETE_REPOS_FILE" ]; then
-        echo ""
-        echo "[查看待删项目操作失败]"
-        echo ""
-        echo ">> 文件无效: 当前目录中找不到待删项目所在的文件名: repos.txt";
-        echo ""
-        exit
-    fi
-
     echo ""
     echo "====================待删项目列表===================="
     echo ""
@@ -184,6 +159,30 @@ function getJsonValuesByAwk()
     }'
 }
 
+loadConfig(){
+    if [ ! -f $CONFIG_FILE ];then
+        touch $CONFIG_FILE
+        echo "" > $CONFIG_FILE
+        echo "#USERNAME代表github上的用户名"   >> $CONFIG_FILE
+        echo "USERNAME=''"   >> $CONFIG_FILE
+        echo "#TOKEN代表从github上获取的TOKEN" >> $CONFIG_FILE
+        echo "TOKEN=''" >> $CONFIG_FILE
+    fi
+
+    if [ ! -f "./$TO_DELETE_REPOS_FILE" ]; then
+        touch $TO_DELETE_REPOS_FILE
+    fi
+
+    source $CONFIG_FILE
+}
+
+#加载配置文件
+CONFIG_FILE="./config.ini"
+TO_DELETE_REPOS_FILE="repos.txt"
+loadConfig;
+USER_REPO_GITHUB_API="https://api.github.com/users/$USERNAME/repos"
+
+
 
 case "$1" in
     show)
@@ -199,15 +198,15 @@ case "$1" in
         echo ""
         echo "[脚本执行说明]"
         echo ""
-        echo $"\$ sh $0 <show|fetch|remove>"
+        echo $"\$ sh $0 [show|fetch|remove]"
         echo ""
         echo "[可用命令说明]"
         echo ""
         echo "1. show:   查看本地自行配置好的待删公共项目"
         echo "2. fetch:  根据用户名在线查询名下的公共项目"
-        echo "2. remove: 根据配置文件批量删除指定公共项目"
+        echo "3. remove: 根据配置文件批量删除指定公共项目"
         help;
-        exit 2
+        exit 
 esac
 exit $?
 
